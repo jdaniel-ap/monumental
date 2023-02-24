@@ -48,7 +48,7 @@ class _CreateScreenState extends State<CreateScreen> {
             var hour = reminder['date'].hour;
             var minute = reminder['date'].minute;
             var id = Random().nextInt(100000);
-            formatedReminders[index]['id'] = id;
+            print('******************* prints *****************');
 
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
@@ -73,18 +73,23 @@ class _CreateScreenState extends State<CreateScreen> {
                 timeZone: AwesomeNotifications.localTimeZoneIdentifier,
               ),
             );
+
+            formatedReminders[index]['id'] = id;
+            formatedReminders[index]['weekday'] = weekday;
+            print(formatedReminders[index]);
           }
         }
       }
     }
 
     if (_activeNotifications) {
-      notify();
+      await notify();
     }
 
     final storedReminders =
         json.decode(prefs.getString('@monumental_reminders') ?? '[]');
-
+    print('*********************** saving... **************');
+    print(formatedReminders);
     final stringifyReminder = json.encode(
       [
         ...storedReminders,

@@ -2,13 +2,16 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:monumental/screens/main_screen.dart';
+import 'package:monumental/services/notitications.dart';
 import 'package:monumental/utils/constans.dart';
 import 'package:monumental/widgets/header.dart';
 import 'package:monumental/widgets/history.dart';
 import 'package:monumental/widgets/quote.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final storedReminders = [];
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -19,46 +22,19 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Allow notifications'),
-            content: const Text('Our apps would  like send you notifications'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'Permitir',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  AwesomeNotifications()
-                      .requestPermissionToSendNotifications()
-                      .then((_) => Navigator.pop(context));
-                },
-                child: const Text(
-                  'No permitir',
-                  style: TextStyle(
-                    color: Colors.teal,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      }
-    });
+    void getReminders() async {
+      final prefs = await SharedPreferences.getInstance();
+      final storedReminders = prefs.get('@monumental_reminders');
+      print(storedReminders);
+    }
+
+    getReminders();
+    Notifications().initialize(context);
+  }
+
+  @override
+  void dispose() {
+    print('dismount *************');
   }
 
   @override
