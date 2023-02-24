@@ -1,10 +1,16 @@
 import 'dart:convert';
+import 'dart:math';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:monumental/enums/buttonColor.dart';
 import 'package:monumental/screens/main_screen.dart';
+import 'package:monumental/utils/colors.dart';
 import 'package:monumental/utils/constans.dart';
 import 'package:monumental/widgets/create_instructions.dart';
+import 'package:monumental/widgets/custom_button.dart';
 import 'package:monumental/widgets/habit_frecuency.dart';
 import 'package:monumental/widgets/habit_title.dart';
 import 'package:monumental/widgets/handle_reminders.dart';
@@ -27,20 +33,53 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _controller = TextEditingController();
 
   Future _saveReminder() async {
+    var formatedReminders = _reminders;
     final prefs = await SharedPreferences.getInstance();
 
-    _backToHome() {
+    backToHome() {
       Navigator.pop(context);
     }
 
-    _notify() {
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 1,
-            channelKey: 'key1',
-            title: 'Tienes un recordatorio!',
-            body: 'Pasear al perro, es ahora!'),
-      );
+    Future<void> notify() async {
+      for (var weekday in _frencuency) {
+        for (var index = 0; index < _reminders.length; index++) {
+          var reminder = _reminders[index];
+          if (reminder['isActive']) {
+            var hour = reminder['date'].hour;
+            var minute = reminder['date'].minute;
+            var id = Random().nextInt(100000);
+            formatedReminders[index]['id'] = id;
+
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: id,
+                channelKey: 'monumental_basic_channel',
+                title:
+                    'Tienes un recordatorio! ${Emojis.time_watch}${Emojis.person_activity_person_running}',
+                body: '$_title, es ahora!',
+                icon: 'resource://drawable/notification_icon',
+                color: kFontColor,
+                notificationLayout: NotificationLayout.BigPicture,
+                bigPicture: 'asset://images/quote_3.png',
+              ),
+              schedule: NotificationCalendar(
+                weekday: weekday,
+                hour: hour,
+                minute: minute,
+                second: 0,
+                millisecond: 0,
+                repeats: true,
+                allowWhileIdle: true,
+                timeZone: AwesomeNotifications.localTimeZoneIdentifier,
+              ),
+            );
+          }
+        }
+      }
+    }
+
+    if (_activeNotifications) {
+      notify();
     }
 
     final storedReminders =
@@ -51,7 +90,7 @@ class _CreateScreenState extends State<CreateScreen> {
         ...storedReminders,
         {
           "title": _title,
-          "reminders": _reminders,
+          "reminders": formatedReminders,
           "frecuency": _frencuency,
           "notifications": _activeNotifications
         }
@@ -64,12 +103,14 @@ class _CreateScreenState extends State<CreateScreen> {
       },
     );
 
+    print(storedReminders);
+
     await prefs.setString(
       '@monumental_reminders',
       stringifyReminder,
     );
-    _notify();
-    // _backToHome();
+
+    backToHome();
   }
 
   List<String> weekDays = ['lun', 'mar', 'mie', 'jue', 'vie', 'sab', 'dom'];
@@ -85,10 +126,16 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
-  void handleNotications() {
+  Future handleNotications() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_activeNotifications) {
+      Navigator.of(context).push(DismissibleDialog());
+    }
     setState(() {
       _activeNotifications = !_activeNotifications;
     });
+    await AwesomeNotifications().cancelAll();
+    prefs.clear();
   }
 
   void updateReminder(int index, isActive) {
@@ -155,6 +202,81 @@ class _CreateScreenState extends State<CreateScreen> {
             hasNotifications: _activeNotifications,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class DismissibleDialog<T> extends PopupRoute<T> {
+  @override
+  Color? get barrierColor => Colors.black.withAlpha(0x50);
+
+  // This allows the popup to be dismissed by tapping the scrim or by pressing
+  // the escape key on the keyboard.
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String? get barrierLabel => 'Dismissible Dialog';
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 300);
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return Center(
+      // Provide DefaultTextStyle to ensure that the dialog's text style
+      // matches the rest of the text in the app.
+      child: DefaultTextStyle(
+        style: Theme.of(context).textTheme.bodyMedium!,
+        // UnconstrainedBox is used to make the dialog size itself
+        // to fit to the size of the content.
+        child: UnconstrainedBox(
+          child: Container(
+            height: 450.0,
+            width: MediaQuery.of(context).size.width / 1.1,
+            padding:
+                const EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Expanded(
+                  child: Image.asset(
+                    'images/monumental_progress.png',
+                    width: 250.0,
+                  ),
+                ),
+                const Text('notificaciones\ndesactivadas',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Klasik',
+                      fontSize: 24.0,
+                    )),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                Text(
+                  'La aplicacion no podra enviarte\navisos sobre este habito.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: kFontColor.withOpacity(0.6)),
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
+                CustomButton(
+                  color: ButtonColor.secondary,
+                  action: () => Navigator.pop(context),
+                  title: 'Continuar',
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

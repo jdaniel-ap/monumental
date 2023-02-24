@@ -148,8 +148,12 @@ class RemindersModal extends StatelessWidget {
             ),
             Row(
               children: [
-                CustomButton(
-                    action: openTimePicker, isDisabled: reminders.length == 9)
+                Expanded(
+                  child: CustomButton(
+                      title: 'Adicionar',
+                      action: openTimePicker,
+                      isDisabled: reminders.length == 9),
+                )
               ],
             )
           ],

@@ -7,18 +7,21 @@ import 'package:monumental/utils/colors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  AwesomeNotifications().initialize(null, [
-    NotificationChannel(
-      channelKey: 'basic_channel',
-      channelName: 'Basic notifications',
-      channelDescription: 'Notification channel for basic tests',
-      defaultColor: Color(0xFF9D50DD),
-      ledColor: Colors.white,
-      enableLights: true,
-      enableVibration: true,
-      playSound: true,
-    ),
-  ]);
+  AwesomeNotifications().initialize(
+      // set the icon to null if you want to use the default app icon
+      'resource://drawable/hiking',
+      [
+        NotificationChannel(
+          channelGroupKey: 'monumental_basic_channel_group',
+          channelKey: 'monumental_basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          ledColor: Colors.white,
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        )
+      ],
+      debug: true);
   runApp(const MyApp());
 }
 

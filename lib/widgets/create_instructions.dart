@@ -24,7 +24,7 @@ class CreateInstructions extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: 182.0,
+            height: 190.0,
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(
@@ -75,7 +75,7 @@ class CreateInstructions extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 10.0,
+            bottom: 15.0,
             width: 25.0,
             child: Image.asset(
               'images/draw_arrow.png',

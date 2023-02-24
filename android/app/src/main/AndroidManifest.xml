@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.monumental">
    <application
-        android:label="monumental"
+        android:label="Monumental habit"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

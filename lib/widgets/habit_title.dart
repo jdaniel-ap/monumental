@@ -22,7 +22,7 @@ class HabitTitle extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              onSubmitted: (e) {
+              onChanged: (e) {
                 handleHabitTitle(e);
               },
               decoration: InputDecoration(
