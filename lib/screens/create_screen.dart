@@ -107,8 +107,6 @@ class _CreateScreenState extends State<CreateScreen> {
       },
     );
 
-    print(storedReminders);
-
     await prefs.setString(
       '@monumental_reminders',
       stringifyReminder,
