@@ -22,31 +22,30 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Habit> habits = [];
+
+  void getReminders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedReminders = prefs.getString('@monumental_reminders') ?? '[]';
+
+    List parseReminders = json.decode(storedReminders);
+    List<Habit> habitList = parseReminders
+        .map(
+          (e) => Habit(
+            activeNotifications: e['activeNotifications'],
+            title: e['title'],
+            frencuency: e['frecuency'].cast<int>(),
+            reminders: e['reminders'].cast<Reminder>(),
+          ),
+        )
+        .toList();
+    setState(() {
+      habits = habitList;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-
-    void getReminders() async {
-      final prefs = await SharedPreferences.getInstance();
-      final storedReminders = prefs.getString('@monumental_reminders') ?? '[]';
-      print('********************');
-      print(storedReminders);
-
-      List parseReminders = json.decode(storedReminders);
-      List<Habit> habitList = parseReminders
-          .map(
-            (e) => Habit(
-              activeNotifications: e['activeNotifications'],
-              title: e['title'],
-              frencuency: e['frecuency'].cast<int>(),
-              reminders: e['reminders'].cast<Reminder>(),
-            ),
-          )
-          .toList();
-      setState(() {
-        habits = habitList;
-      });
-    }
 
     getReminders();
     Notifications().initialize(context);
@@ -55,7 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MainScreen(
-      buttonAction: () => Navigator.pushNamed(context, '/create'),
+      buttonAction: () =>
+          Navigator.pushNamed(context, '/create').then((_) => getReminders()),
       buttonType: ButtonType.create,
       child: Column(
         children: [
