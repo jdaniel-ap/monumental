@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Instruction extends StatelessWidget {
+  const Instruction({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -12,12 +14,10 @@ class Instruction extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Container(
-        child: Image.asset(
-          'images/profile.png',
-          width: 20.0,
-          height: 20.0,
-        ),
+      child: Image.asset(
+        'images/profile.png',
+        width: 20.0,
+        height: 20.0,
       ),
     );
   }
