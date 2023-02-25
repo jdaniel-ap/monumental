@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:monumental/models/reminder.dart';
 import 'package:monumental/utils/colors.dart';
 import 'package:monumental/widgets/no_reminders_modal.dart';
 import 'package:monumental/widgets/time_picker_modal.dart';
 
 class Schedules extends StatefulWidget {
-  void Function(Map<String, Object>) addReminder;
+  void Function(Reminder) addReminder;
   void Function(int, bool) updateReminder;
   void Function(int) removeReminder;
-  List reminders;
+  List<Reminder> reminders;
   Schedules({
     super.key,
     required this.addReminder,
@@ -29,7 +30,7 @@ class _Schedules extends State<Schedules> {
         ? TimePickerModal(
             addReminder: ((reminder) => {
                   setState((() => isTimePickerEnable = false)),
-                  widget.addReminder({'isActive': true, 'date': reminder})
+                  widget.addReminder(Reminder(isActive: true, date: reminder))
                 }),
             cancelNewReminder: (() {
               setState((() => isTimePickerEnable = false));

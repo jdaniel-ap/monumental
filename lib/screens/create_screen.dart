@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:monumental/enums/buttonColor.dart';
+import 'package:monumental/models/habit.dart';
+import 'package:monumental/models/reminder.dart';
 import 'package:monumental/screens/main_screen.dart';
 import 'package:monumental/utils/colors.dart';
 import 'package:monumental/utils/constans.dart';
@@ -29,11 +31,11 @@ class _CreateScreenState extends State<CreateScreen> {
   bool _activeNotifications = true;
   String _title = '';
   final List<int> _frencuency = [];
-  final List _reminders = [];
+  final List<Reminder> _reminders = [];
   final TextEditingController _controller = TextEditingController();
 
   Future _saveReminder() async {
-    var formatedReminders = _reminders;
+    List<Reminder> formatedReminders = [];
     final prefs = await SharedPreferences.getInstance();
 
     backToHome() {
@@ -44,11 +46,10 @@ class _CreateScreenState extends State<CreateScreen> {
       for (var weekday in _frencuency) {
         for (var index = 0; index < _reminders.length; index++) {
           var reminder = _reminders[index];
-          if (reminder['isActive']) {
-            var hour = reminder['date'].hour;
-            var minute = reminder['date'].minute;
+          if (reminder.isActive) {
+            var hour = reminder.date.hour;
+            var minute = reminder.date.minute;
             var id = Random().nextInt(100000);
-            print('******************* prints *****************');
 
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
@@ -73,10 +74,11 @@ class _CreateScreenState extends State<CreateScreen> {
                 timeZone: AwesomeNotifications.localTimeZoneIdentifier,
               ),
             );
-
-            formatedReminders[index]['id'] = id;
-            formatedReminders[index]['weekday'] = weekday;
-            print(formatedReminders[index]);
+            formatedReminders.add(Reminder(
+                isActive: reminder.isActive,
+                date: reminder.date,
+                weekday: weekday,
+                id: id));
           }
         }
       }
@@ -85,20 +87,17 @@ class _CreateScreenState extends State<CreateScreen> {
     if (_activeNotifications) {
       await notify();
     }
-
     final storedReminders =
         json.decode(prefs.getString('@monumental_reminders') ?? '[]');
-    print('*********************** saving... **************');
-    print(formatedReminders);
     final stringifyReminder = json.encode(
       [
         ...storedReminders,
-        {
-          "title": _title,
-          "reminders": formatedReminders,
-          "frecuency": _frencuency,
-          "notifications": _activeNotifications
-        }
+        Habit(
+          activeNotifications: _activeNotifications,
+          title: _title,
+          frencuency: _frencuency,
+          reminders: formatedReminders,
+        ).toJson(),
       ],
       toEncodable: (object) {
         if (object is DateTime) {
@@ -125,7 +124,7 @@ class _CreateScreenState extends State<CreateScreen> {
     });
   }
 
-  void addReminder(Map<String, Object> reminder) {
+  void addReminder(Reminder reminder) {
     setState(() {
       _reminders.add(reminder);
     });
@@ -144,7 +143,7 @@ class _CreateScreenState extends State<CreateScreen> {
   }
 
   void updateReminder(int index, isActive) {
-    _reminders[index] = {..._reminders[index], 'isActive': isActive};
+    _reminders[index].isActive = isActive;
   }
 
   void removeReminder(int index) {

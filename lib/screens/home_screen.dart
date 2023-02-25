@@ -33,11 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void dispose() {
-    print('dismount *************');
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MainScreen(
       buttonAction: () => Navigator.pushNamed(context, '/create'),

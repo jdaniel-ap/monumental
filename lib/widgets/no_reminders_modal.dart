@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:monumental/models/reminder.dart';
 import 'package:monumental/utils/colors.dart';
 import 'package:monumental/widgets/custom_button.dart';
 import 'package:monumental/widgets/modal.dart';
@@ -10,7 +11,7 @@ class RemindersModal extends StatelessWidget {
   void Function() openTimePicker;
   void Function(int, bool) updateReminder;
   void Function(int) removeReminder;
-  List reminders;
+  List<Reminder> reminders;
 
   RemindersModal({
     Key? key,
@@ -22,17 +23,17 @@ class RemindersModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    reminders.sort((a, b) => a["date"].compareTo(b["date"]));
+    reminders.sort((a, b) => a.date.compareTo(b.date));
     var sortedReminders = reminders;
 
-    Widget reminder(item) {
+    Widget reminder(MapEntry<int, Reminder> item) {
       return Stack(
         clipBehavior: Clip.none,
         children: [
           MaterialButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              updateReminder(item.key, !item.value['isActive']);
+              updateReminder(item.key, !item.value.isActive);
             },
             child: AnimatedContainer(
               duration: const Duration(
@@ -41,7 +42,7 @@ class RemindersModal extends StatelessWidget {
               width: 115.0,
               height: 92.0,
               decoration: BoxDecoration(
-                color: item.value['isActive']
+                color: item.value.isActive
                     ? kOrangeColor.withOpacity(0.2)
                     : kFontColor.withOpacity(0.2),
                 borderRadius: const BorderRadius.all(
@@ -53,11 +54,10 @@ class RemindersModal extends StatelessWidget {
                 children: [
                   Text(
                     DateFormat.jm().format(
-                      item.value['date'],
+                      item.value.date,
                     ),
                     style: GoogleFonts.manrope(
-                        color:
-                            item.value['isActive'] ? kOrangeColor : kFontColor,
+                        color: item.value.isActive ? kOrangeColor : kFontColor,
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold),
                   ),
@@ -65,7 +65,7 @@ class RemindersModal extends StatelessWidget {
                     height: 10.0,
                   ),
                   CustomSwitch(
-                    isActive: item.value['isActive'],
+                    isActive: item.value.isActive,
                   ),
                 ],
               ),
