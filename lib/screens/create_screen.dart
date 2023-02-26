@@ -175,8 +175,8 @@ class _CreateScreenState extends State<CreateScreen> {
         children: [
           Header(
             title: 'Crear habito',
-            icon: FontAwesomeIcons.arrowLeft,
-            onTap: () => Navigator.pop(context),
+            primaryIcon: FontAwesomeIcons.arrowLeft,
+            primaryAction: () => Navigator.pop(context),
           ),
           HabitTitle(
             habitName: _title,

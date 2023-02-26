@@ -6,6 +6,7 @@ class MainScreen extends StatefulWidget {
   final Widget child;
   final void Function() buttonAction;
   final bool? buttonDisabled;
+  final bool? withoutBackground;
   final ButtonType buttonType;
   const MainScreen({
     Key? key,
@@ -13,6 +14,7 @@ class MainScreen extends StatefulWidget {
     required this.buttonType,
     this.buttonDisabled,
     required this.buttonAction,
+    this.withoutBackground,
   }) : super(key: key);
 
   @override
@@ -28,13 +30,15 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Container(
             constraints: const BoxConstraints.expand(),
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/background.png'),
-                fit: BoxFit.scaleDown,
-                alignment: Alignment(0, 1.0),
-              ),
-            ),
+            decoration: widget.withoutBackground == true
+                ? const BoxDecoration()
+                : const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/background.png'),
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment(0, 1.0),
+                    ),
+                  ),
           ),
           widget.child,
         ],

@@ -36,11 +36,16 @@ class History extends StatelessWidget {
                       .asMap()
                       .entries
                       .map(
-                        (item) => HabitGrid(
-                          name: item.value.title[0].toUpperCase() +
-                              item.value.title
-                                  .substring(1, item.value.title.length),
-                          color: colors[item.key],
+                        (item) => GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, '/dashboard',
+                              arguments: {'title': item.value.title}),
+                          child: HabitGrid(
+                            name: item.value.title[0].toUpperCase() +
+                                item.value.title
+                                    .substring(1, item.value.title.length),
+                            color: colors[item.key],
+                          ),
                         ),
                       )
                       .toList(),

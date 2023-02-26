@@ -4,13 +4,17 @@ import 'package:monumental/utils/colors.dart';
 
 class Header extends StatelessWidget {
   final String title;
-  final IconData icon;
-  final void Function() onTap;
+  final IconData primaryIcon;
+  final Widget? secondaryIcon;
+  final void Function() primaryAction;
+  final void Function()? secondaryAction;
   const Header({
     Key? key,
     required this.title,
-    required this.icon,
-    required this.onTap,
+    required this.primaryIcon,
+    required this.primaryAction,
+    this.secondaryAction,
+    this.secondaryIcon,
   }) : super(key: key);
 
   @override
@@ -22,7 +26,7 @@ class Header extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: (() {
-              onTap();
+              primaryAction();
             }),
             child: Container(
               width: 45.0,
@@ -32,7 +36,7 @@ class Header extends StatelessWidget {
                 color: kFontColor.withOpacity(0.1),
               ),
               child: Icon(
-                icon,
+                primaryIcon,
                 size: 20.0,
                 color: kFontColor,
               ),
@@ -48,16 +52,22 @@ class Header extends StatelessWidget {
               ),
             ], fontSize: 20.0, fontWeight: FontWeight.bold),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Container(
-              width: 80.0,
-              height: 80.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40.0),
-                color: Colors.transparent,
-              ),
-            ),
+          GestureDetector(
+            onTap: secondaryAction,
+            child: Container(
+                width: 45.0,
+                height: 45.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40.0),
+                  color: secondaryAction != null
+                      ? kFontColor.withOpacity(0.1)
+                      : Colors.transparent,
+                ),
+                child: Center(
+                  child: secondaryIcon != null && secondaryAction != null
+                      ? secondaryIcon
+                      : const SizedBox(),
+                )),
           ),
         ],
       ),
