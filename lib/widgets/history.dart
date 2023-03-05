@@ -39,7 +39,7 @@ class History extends StatelessWidget {
                         (item) => GestureDetector(
                           onTap: () => Navigator.pushNamed(
                               context, '/dashboard',
-                              arguments: {'title': item.value.title}),
+                              arguments: {'id': item.value.id}),
                           child: HabitGrid(
                             name: item.value.title[0].toUpperCase() +
                                 item.value.title

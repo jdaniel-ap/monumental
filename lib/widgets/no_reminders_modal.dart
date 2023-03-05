@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:monumental/enums/buttonColor.dart';
 import 'package:monumental/models/reminder.dart';
 import 'package:monumental/utils/colors.dart';
 import 'package:monumental/widgets/custom_button.dart';
@@ -25,6 +26,8 @@ class RemindersModal extends StatelessWidget {
   Widget build(BuildContext context) {
     reminders.sort((a, b) => a.date.compareTo(b.date));
     var sortedReminders = reminders;
+    bool hasReminders = reminders.isNotEmpty;
+    bool remindersLimit = reminders.length == 9;
 
     Widget reminder(MapEntry<int, Reminder> item) {
       return Stack(
@@ -148,12 +151,30 @@ class RemindersModal extends StatelessWidget {
             ),
             Row(
               children: [
+                hasReminders
+                    ? Expanded(
+                        child: CustomButton(
+                          color: ButtonColor.secondary,
+                          title: 'Cerrar',
+                          action: () {
+                            Navigator.pop(context);
+                          },
+                          isDisabled: remindersLimit,
+                        ),
+                      )
+                    : const SizedBox(),
+                hasReminders
+                    ? const SizedBox(
+                        width: 10.0,
+                      )
+                    : const SizedBox(),
                 Expanded(
                   child: CustomButton(
-                      title: 'Adicionar',
-                      action: openTimePicker,
-                      isDisabled: reminders.length == 9),
-                )
+                    title: 'Adicionar',
+                    action: openTimePicker,
+                    isDisabled: remindersLimit,
+                  ),
+                ),
               ],
             )
           ],

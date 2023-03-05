@@ -14,6 +14,7 @@ class HabitsData {
     List<Habit> habitList = parseReminders
         .map(
           (e) => Habit(
+            id: e['id'],
             activeNotifications: e['activeNotifications'],
             title: e['title'],
             frencuency: e['frecuency'].cast<int>(),
@@ -26,8 +27,7 @@ class HabitsData {
       final arguments = (ModalRoute.of(context)?.settings.arguments ??
           <String, dynamic>{}) as Map;
 
-      Habit habitFinder =
-          habitList.firstWhere((h) => h.title == arguments['title']);
+      Habit habitFinder = habitList.firstWhere((h) => h.id == arguments['id']);
 
       return habitFinder;
     }

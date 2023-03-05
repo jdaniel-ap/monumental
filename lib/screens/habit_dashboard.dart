@@ -20,7 +20,11 @@ class HabitDashboard extends StatefulWidget {
 class _HabitDashboardState extends State<HabitDashboard> {
   int minTitleLength = 15;
   Habit? habit = Habit(
-      activeNotifications: false, title: '0000', frencuency: [], reminders: []);
+      id: '',
+      activeNotifications: false,
+      title: '0000',
+      frencuency: [],
+      reminders: []);
   HabitsData habitController = HabitsData();
 
   getHabit() async {
@@ -55,7 +59,8 @@ class _HabitDashboardState extends State<HabitDashboard> {
               width: 20,
             ),
             primaryAction: () => Navigator.pop(context),
-            secondaryAction: () {},
+            secondaryAction: () => Navigator.pushNamed(context, '/update',
+                arguments: {'id': habit?.id}),
           ),
         ],
       ),

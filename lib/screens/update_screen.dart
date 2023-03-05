@@ -10,6 +10,7 @@ import 'package:monumental/models/reminder.dart';
 import 'package:monumental/screens/main_screen.dart';
 import 'package:monumental/utils/colors.dart';
 import 'package:monumental/utils/constans.dart';
+import 'package:monumental/utils/get_reminders.dart';
 import 'package:monumental/widgets/create_instructions.dart';
 import 'package:monumental/widgets/custom_button.dart';
 import 'package:monumental/widgets/habit_frecuency.dart';
@@ -19,30 +20,27 @@ import 'package:monumental/widgets/header.dart';
 import 'package:monumental/widgets/schedules.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CreateScreen extends StatefulWidget {
-  const CreateScreen({Key? key}) : super(key: key);
+class UpdateScreen extends StatefulWidget {
+  const UpdateScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreateScreen> createState() => _CreateScreenState();
+  State<UpdateScreen> createState() => _UpdateScreenState();
 }
 
-class _CreateScreenState extends State<CreateScreen> {
-  String habitId = DateTime.now().toIso8601String();
+class _UpdateScreenState extends State<UpdateScreen> {
   bool _activeNotifications = true;
   String _title = '';
-  final List<int> _frencuency = [];
-  final List<Reminder> _reminders = [];
+  String _id = '';
+  List<int> _frencuency = [];
+  List<Reminder> _reminders = [];
   final TextEditingController _controller = TextEditingController();
+  List<String> unsuscribesReminders = [];
 
-  Future _saveReminder() async {
+  Future<List<Reminder>> notify() async {
     List<Reminder> formatedReminders = [];
-    final prefs = await SharedPreferences.getInstance();
-
-    backToHome() {
-      Navigator.pop(context);
-    }
-
-    Future<void> notify() async {
+    if (_activeNotifications) {
+      await AwesomeNotifications()
+          .cancelSchedulesByGroupKey('monumental_basic_channel_$_id');
       for (var weekday in _frencuency) {
         for (var index = 0; index < _reminders.length; index++) {
           var reminder = _reminders[index];
@@ -54,7 +52,6 @@ class _CreateScreenState extends State<CreateScreen> {
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
                 id: id,
-                groupKey: 'monumental_basic_channel_$habitId',
                 channelKey: 'monumental_basic_channel',
                 title:
                     'Tienes un recordatorio! ${Emojis.time_watch}${Emojis.person_activity_person_running}',
@@ -84,18 +81,31 @@ class _CreateScreenState extends State<CreateScreen> {
           }
         }
       }
+    } else {
+      await AwesomeNotifications()
+          .cancelSchedulesByGroupKey('monumental_basic_channel_$_id');
     }
 
-    if (_activeNotifications) {
-      await notify();
+    return formatedReminders;
+  }
+
+  Future _saveReminder() async {
+    List<Reminder> formatedReminders = [];
+    final prefs = await SharedPreferences.getInstance();
+
+    backToHome() {
+      Navigator.pop(context);
     }
+
+    formatedReminders = await notify();
+
     final storedReminders =
         json.decode(prefs.getString('@monumental_reminders') ?? '[]');
     final stringifyReminder = json.encode(
       [
         ...storedReminders,
         Habit(
-          id: habitId,
+          id: DateTime.now().toIso8601String(),
           activeNotifications: _activeNotifications,
           title: _title,
           frencuency: _frencuency,
@@ -160,6 +170,33 @@ class _CreateScreenState extends State<CreateScreen> {
         _frencuency.add(day);
       }
     });
+  }
+
+  initializeData() async {
+    HabitsData controller = HabitsData();
+    Habit habitData = await controller.getHabit(context);
+    _controller.text = habitData.title;
+    List<Reminder> filterReminders = habitData.reminders;
+    final weekDays = habitData.frencuency.map((e) => e).toSet();
+
+    //     List<Reminder> filterReminders = habitData.reminders;
+    // final weekDays = habitData.frencuency.map((e) => e).toSet();
+    // print(habitData.runtimeType);
+    // filterReminders.retainWhere((element) => weekDays.remove(element.weekday));
+
+    setState(() {
+      _id = habitData.id;
+      _title = habitData.title;
+      _activeNotifications = habitData.activeNotifications;
+      _frencuency = habitData.frencuency;
+      _reminders = habitData.reminders;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeData();
   }
 
   @override

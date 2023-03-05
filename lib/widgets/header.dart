@@ -24,21 +24,24 @@ class Header extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: (() {
-              primaryAction();
-            }),
-            child: Container(
-              width: 45.0,
-              height: 45.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40.0),
-                color: kFontColor.withOpacity(0.1),
-              ),
-              child: Icon(
-                primaryIcon,
-                size: 20.0,
-                color: kFontColor,
+          Container(
+            width: 45.0,
+            height: 45.0,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40.0),
+              color: kFontColor.withOpacity(0.1),
+            ),
+            child: MaterialButton(
+              onPressed: primaryAction,
+              padding: const EdgeInsets.all(0),
+              minWidth: 0,
+              child: Center(
+                child: Icon(
+                  primaryIcon,
+                  size: 20.0,
+                  color: kFontColor,
+                ),
               ),
             ),
           ),
@@ -52,22 +55,26 @@ class Header extends StatelessWidget {
               ),
             ], fontSize: 20.0, fontWeight: FontWeight.bold),
           ),
-          GestureDetector(
-            onTap: secondaryAction,
-            child: Container(
-                width: 45.0,
-                height: 45.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40.0),
-                  color: secondaryAction != null
-                      ? kFontColor.withOpacity(0.1)
-                      : Colors.transparent,
-                ),
-                child: Center(
-                  child: secondaryIcon != null && secondaryAction != null
-                      ? secondaryIcon
-                      : const SizedBox(),
-                )),
+          Container(
+            width: 45.0,
+            height: 45.0,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40.0),
+              color: secondaryAction != null
+                  ? kFontColor.withOpacity(0.1)
+                  : Colors.transparent,
+            ),
+            child: MaterialButton(
+              onPressed: secondaryAction,
+              padding: const EdgeInsets.all(0),
+              minWidth: 0,
+              child: Center(
+                child: secondaryIcon != null && secondaryAction != null
+                    ? secondaryIcon
+                    : const SizedBox(),
+              ),
+            ),
           ),
         ],
       ),

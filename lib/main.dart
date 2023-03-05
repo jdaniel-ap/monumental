@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:monumental/screens/create_screen.dart';
 import 'package:monumental/screens/habit_dashboard.dart';
 import 'package:monumental/screens/home_screen.dart';
+import 'package:monumental/screens/update_screen.dart';
 import 'package:monumental/utils/colors.dart';
 
 void main() {
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/': ((context) => HomeScreen()),
         '/create': (context) => CreateScreen(),
         '/dashboard': (context) => HabitDashboard(),
+        '/update': (context) => UpdateScreen(),
       },
     );
   }

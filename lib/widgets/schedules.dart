@@ -69,9 +69,11 @@ class _Schedules extends State<Schedules> {
               });
             },
           ).whenComplete(
-            () => setState(
-              () => isTimePickerEnable = false,
-            ),
+            () {
+              setState(
+                () => isTimePickerEnable = false,
+              );
+            },
           );
         },
         child: Container(
