@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Habit> habits = [];
 
   void getReminders() async {
+    print('***************************');
     HabitsData habitsData = HabitsData();
     List<Habit> habitList = await habitsData.getHabitList();
     setState(() {
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           History(
             habits: habits,
+            reload: getReminders,
           ),
         ],
       ),

@@ -8,7 +8,9 @@ import 'package:monumental/widgets/welcome_instruction.dart';
 
 class History extends StatelessWidget {
   List<Habit> habits;
-  History({Key? key, required this.habits}) : super(key: key);
+  Function() reload;
+  History({Key? key, required this.habits, required this.reload})
+      : super(key: key);
   List<Color> colors = [
     const Color(0xFFFC9D45),
     const Color(0xFFF65B4E),
@@ -38,8 +40,9 @@ class History extends StatelessWidget {
                       .map(
                         (item) => GestureDetector(
                           onTap: () => Navigator.pushNamed(
-                              context, '/dashboard',
-                              arguments: {'id': item.value.id}),
+                                  context, '/dashboard',
+                                  arguments: {'id': item.value.id})
+                              .then((_) => reload()),
                           child: HabitGrid(
                             name: item.value.title[0].toUpperCase() +
                                 item.value.title

@@ -46,10 +46,10 @@ class _CreateScreenState extends State<CreateScreen> {
       for (var weekday in _frencuency) {
         for (var index = 0; index < _reminders.length; index++) {
           var reminder = _reminders[index];
+          var id = Random().nextInt(2147483647);
           if (reminder.isActive) {
             var hour = reminder.date.hour;
             var minute = reminder.date.minute;
-            var id = Random().nextInt(2147483647);
 
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
@@ -75,13 +75,13 @@ class _CreateScreenState extends State<CreateScreen> {
                 timeZone: AwesomeNotifications.localTimeZoneIdentifier,
               ),
             );
-            formatedReminders.add(Reminder(
-              isActive: reminder.isActive,
-              date: reminder.date,
-              weekday: weekday,
-              id: id,
-            ));
           }
+          formatedReminders.add(Reminder(
+            isActive: reminder.isActive,
+            date: reminder.date,
+            weekday: weekday,
+            id: id,
+          ));
         }
       }
     }

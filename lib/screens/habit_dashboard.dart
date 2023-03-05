@@ -60,7 +60,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
             ),
             primaryAction: () => Navigator.pop(context),
             secondaryAction: () => Navigator.pushNamed(context, '/update',
-                arguments: {'id': habit?.id}),
+                arguments: {'id': habit?.id}).then((_) => getHabit()),
           ),
         ],
       ),

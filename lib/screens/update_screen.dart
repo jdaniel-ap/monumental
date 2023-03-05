@@ -44,10 +44,10 @@ class _UpdateScreenState extends State<UpdateScreen> {
       for (var weekday in _frencuency) {
         for (var index = 0; index < _reminders.length; index++) {
           var reminder = _reminders[index];
+          var id = Random().nextInt(2147483647);
           if (reminder.isActive) {
             var hour = reminder.date.hour;
             var minute = reminder.date.minute;
-            var id = Random().nextInt(2147483647);
 
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
@@ -72,13 +72,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
                 timeZone: AwesomeNotifications.localTimeZoneIdentifier,
               ),
             );
-            formatedReminders.add(Reminder(
-              isActive: reminder.isActive,
-              date: reminder.date,
-              weekday: weekday,
-              id: id,
-            ));
           }
+          formatedReminders.add(Reminder(
+            isActive: reminder.isActive,
+            date: reminder.date,
+            weekday: weekday,
+            id: id,
+          ));
         }
       }
     } else {
@@ -99,13 +99,16 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
     formatedReminders = await notify();
 
-    final storedReminders =
+    var storedReminders =
         json.decode(prefs.getString('@monumental_reminders') ?? '[]');
+
+    storedReminders.removeWhere((e) => e['id'] == _id);
+
     final stringifyReminder = json.encode(
       [
         ...storedReminders,
         Habit(
-          id: DateTime.now().toIso8601String(),
+          id: _id,
           activeNotifications: _activeNotifications,
           title: _title,
           frencuency: _frencuency,
@@ -176,14 +179,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
     HabitsData controller = HabitsData();
     Habit habitData = await controller.getHabit(context);
     _controller.text = habitData.title;
-    List<Reminder> filterReminders = habitData.reminders;
-    final weekDays = habitData.frencuency.map((e) => e).toSet();
+    final weekDays = habitData.reminders.map((e) => e.date).toSet();
 
-    //     List<Reminder> filterReminders = habitData.reminders;
-    // final weekDays = habitData.frencuency.map((e) => e).toSet();
-    // print(habitData.runtimeType);
-    // filterReminders.retainWhere((element) => weekDays.remove(element.weekday));
-
+    habitData.reminders.retainWhere((element) => weekDays.remove(element.date));
     setState(() {
       _id = habitData.id;
       _title = habitData.title;
