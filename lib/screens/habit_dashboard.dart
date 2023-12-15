@@ -7,6 +7,7 @@ import 'package:monumental/models/reminder.dart';
 import 'package:monumental/screens/main_screen.dart';
 import 'package:monumental/utils/constans.dart';
 import 'package:monumental/utils/get_reminders.dart';
+import 'package:monumental/widgets/calendar.dart';
 import 'package:monumental/widgets/header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,6 +63,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
             secondaryAction: () => Navigator.pushNamed(context, '/update',
                 arguments: {'id': habit?.id}).then((_) => getHabit()),
           ),
+          Calendar(),
         ],
       ),
     );

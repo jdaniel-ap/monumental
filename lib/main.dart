@@ -14,7 +14,6 @@ void main() {
       'resource://drawable/notification_icon',
       [
         NotificationChannel(
-          channelGroupKey: 'monumental_basic_channel_group',
           channelKey: 'monumental_basic_channel',
           channelName: 'Basic notifications',
           channelDescription: 'Notification channel for basic tests',
